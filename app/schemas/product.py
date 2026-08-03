@@ -6,6 +6,7 @@ class ProductBase(BaseModel):
     description: Optional[str] = None
     price: float
     stock: int = 0
+    category_id: Optional[int] = None
 
 class ProductCreate(ProductBase):
     pass
