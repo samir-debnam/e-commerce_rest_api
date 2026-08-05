@@ -41,7 +41,7 @@ def update_category(category_id: int, category_update: CategoryUpdate, db: Sessi
     return category
 
 @router.delete('/{category_id}', status_code=204)
-def delete_product(category_id: int, db: Session = Depends(get_db)):
+def delete_category(category_id: int, db: Session = Depends(get_db)):
     category = db.query(Category).filter(Category.id == category_id).first()
     if not category:
         raise HTTPException(status_code=404, detail='Category not found')
@@ -49,6 +49,6 @@ def delete_product(category_id: int, db: Session = Depends(get_db)):
     db.delete(category)
     db.commit()
 
-    
+
 
 
