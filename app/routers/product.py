@@ -9,6 +9,7 @@ router = APIRouter(prefix='/products', tags=['products'])
 
 @router.post('/', response_model=ProductRead)
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+    ''' Create a new product'''
     new_product = Product(**product.model_dump())
     db.add(new_product)
     db.commit()
@@ -17,10 +18,12 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
 
 @router.get('/', response_model=list[ProductRead])
 def list_products(db: Session = Depends(get_db)):
+    '''List all products'''
     return db.query(Product).all()
 
 @router.get('/{product_id}', response_model=ProductRead)
 def get_product(product_id: int, db: Session = Depends(get_db)):
+    '''Retrieve a single product by its ID'''
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail='Product not found')
@@ -28,6 +31,7 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
 
 @router.patch('/{product_id}', response_model=ProductRead)
 def update_product(product_id: int, product_update: ProductUpdate, db: Session = Depends(get_db)):
+    '''Partially update an existing product's fields'''
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail='Product not found')
@@ -42,6 +46,7 @@ def update_product(product_id: int, product_update: ProductUpdate, db: Session =
 
 @router.delete('/{product_id}', status_code=204)
 def delete_product(product_id: int, db: Session = Depends(get_db)):
+    '''Delete a product by its ID'''
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail='Product not found')

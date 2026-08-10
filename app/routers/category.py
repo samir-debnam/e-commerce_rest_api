@@ -10,6 +10,7 @@ router = APIRouter(prefix='/categories', tags=['categories'])
 
 @router.post('/', response_model=CategoryRead)
 def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
+    '''Create a new category'''
     new_category = Category(**category.model_dump())
     db.add(new_category)
     db.commit()
@@ -18,10 +19,12 @@ def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
 
 @router.get('/', response_model=list[CategoryRead])
 def list_categories(db: Session = Depends(get_db)):
+    '''List all categories'''
     return db.query(Category).all()
 
 @router.get('/{category_id}', response_model=CategoryRead)
 def get_category(category_id: int, db: Session = Depends(get_db)):
+    '''Retrieve a single category by its ID'''
     category = db.query(Category).filter(Category.id == category_id).first()
     if not category:
         raise HTTPException(status_code=404, detail='Category not found')
@@ -29,6 +32,7 @@ def get_category(category_id: int, db: Session = Depends(get_db)):
 
 @router.patch('/{category_id}', response_model=CategoryRead)
 def update_category(category_id: int, category_update: CategoryUpdate, db: Session = Depends(get_db)):
+    '''Partially update an existing category's fields'''
     category = db.query(Category).filter(Category.id==category_id ).first()
     if not category:
         raise HTTPException(status_code=404, detail='Category not found')
@@ -42,6 +46,7 @@ def update_category(category_id: int, category_update: CategoryUpdate, db: Sessi
 
 @router.delete('/{category_id}', status_code=204)
 def delete_category(category_id: int, db: Session = Depends(get_db)):
+    '''Delete a category by its ID'''
     category = db.query(Category).filter(Category.id == category_id).first()
     if not category:
         raise HTTPException(status_code=404, detail='Category not found')
