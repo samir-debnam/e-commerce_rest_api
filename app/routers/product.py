@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.product import Product
 from app.schemas.product import ProductCreate, ProductRead, ProductUpdate
+from app.models.user import User
+from app.core.security import get_current_user
 
 router = APIRouter(prefix='/products', tags=['products'])
 
@@ -45,7 +47,7 @@ def update_product(product_id: int, product_update: ProductUpdate, db: Session =
     return product
 
 @router.delete('/{product_id}', status_code=204)
-def delete_product(product_id: int, db: Session = Depends(get_db)):
+def delete_product(product_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     '''Delete a product by its ID'''
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
