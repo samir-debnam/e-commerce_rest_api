@@ -6,11 +6,12 @@ from app.models.product import Product
 from app.schemas.product import ProductCreate, ProductRead, ProductUpdate
 from app.models.user import User
 from app.core.security import get_current_user
+from app.core.security import require_admin
 
 router = APIRouter(prefix='/products', tags=['products'])
 
 @router.post('/', response_model=ProductRead)
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+def create_product(product: ProductCreate, db: Session = Depends(get_db), current_user: User = Depends(require_admin)):
     ''' Create a new product'''
     new_product = Product(**product.model_dump())
     db.add(new_product)
@@ -32,7 +33,7 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     return product
 
 @router.patch('/{product_id}', response_model=ProductRead)
-def update_product(product_id: int, product_update: ProductUpdate, db: Session = Depends(get_db)):
+def update_product(product_id: int, product_update: ProductUpdate, db: Session = Depends(get_db), current_user: User = Depends(require_admin)):
     '''Partially update an existing product's fields'''
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
@@ -47,7 +48,7 @@ def update_product(product_id: int, product_update: ProductUpdate, db: Session =
     return product
 
 @router.delete('/{product_id}', status_code=204)
-def delete_product(product_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def delete_product(product_id: int, db: Session = Depends(get_db), current_user: User = Depends(require_admin)):
     '''Delete a product by its ID'''
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
