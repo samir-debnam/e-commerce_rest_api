@@ -7,9 +7,11 @@ from app.models.user import User
 from app.models.cart import Cart
 from app.models.cart_item import CartItem
 from app.models.product import Product
+from app.models.order import Order
 from app.schemas.cart import CartRead, CartItemCreate
 from app.services.order_service import checkout
 from app.schemas.order import OrderRead
+
 
 
 router = APIRouter(prefix='/cart', tags=['cart'])
@@ -81,4 +83,16 @@ def checkout_cart(db: Session = Depends(get_db), current_user = Depends(get_curr
 
 
 
+@router.get('/', response_model=list[OrderRead])
+def list_my_orders(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    '''List the current user's order history'''
+    return db.query(Order).filter(Order.user_id == current_user.id).all()
+
+@router.get('/{order_id}', response_model=OrderRead)
+def get_my_order(order_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    '''Retrieve a single order belonging to the current user'''
+    order = db.query(Order).filter(Order.id == current_user.id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail='Order not found')
+    return order
 
