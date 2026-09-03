@@ -8,6 +8,8 @@ from app.models.cart import Cart
 from app.models.cart_item import CartItem
 from app.models.product import Product
 from app.schemas.cart import CartRead, CartItemCreate
+from app.services.order_service import checkout
+from app.schemas.order import OrderRead
 
 
 router = APIRouter(prefix='/cart', tags=['cart'])
@@ -70,6 +72,13 @@ def remove_item(cart_item_id: int, db: Session = Depends(get_db), current_user: 
     db.commit()
     db.refresh(cart)
     return cart
+
+@router.post('/checkout', response_model=OrderRead)
+def checkout_cart(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    '''Converts the user's current cart into an order'''
+    cart = get_or_create_cart(db, current_user)
+    return checkout(cart, db)
+
 
 
 
