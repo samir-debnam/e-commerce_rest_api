@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import Optional
 
 from app.core.database import get_db
 from app.models.product import Product
@@ -20,9 +21,32 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db), curren
     return new_product
 
 @router.get('/', response_model=list[ProductRead])
-def list_products(db: Session = Depends(get_db)):
-    '''List all products'''
-    return db.query(Product).all()
+def list_products(db: Session = Depends(get_db),
+                  category_id: Optional[int] = None,
+                  min_price: Optional[float] = None,
+                  max_price: Optional[float] = None,
+                  sort_by: Optional[str] = None,
+                  ):
+    '''List all products, optionally filtered by category, price or name'''
+    query = db.query(Product)
+
+    if category_id is not None:
+        query = query.filter(Product.category_id == category_id)
+
+    if min_price is not None:
+        query = query.filter(Product.price >= min_price)
+
+    if max_price is not None:
+        query = query.filter(Product.price <= max_price)
+
+    if sort_by == 'price_asc':
+        query = query.order_by(Product.price.asc())
+    elif sort_by == 'price_desc':
+        query = query.order_by(Product.price.desc())
+    elif sort_by == 'name':
+        query = query.order_by(Product.name.asc())
+
+    return query.all()
 
 @router.get('/{product_id}', response_model=ProductRead)
 def get_product(product_id: int, db: Session = Depends(get_db)):
