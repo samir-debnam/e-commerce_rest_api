@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from pydantic import ConfigDict
 from datetime import datetime
 from app.schemas.product import ProductRead
 
@@ -8,8 +9,7 @@ class OrderItemRead(BaseModel):
     price_at_purchase: int
     product: ProductRead
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class OrderRead(BaseModel):
     id: int
@@ -17,7 +17,6 @@ class OrderRead(BaseModel):
     created_at: datetime
     items: list[OrderItemRead]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 

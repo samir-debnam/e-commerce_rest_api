@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from pydantic import ConfigDict
 from app.schemas.product import ProductRead
 
 class CartItemCreate(BaseModel):
@@ -10,15 +11,14 @@ class CartItemRead(BaseModel):
     quantity: int
     product: ProductRead
 
-    class Config:
-        from_attributes=True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CartRead(BaseModel):
     id: int
     items: list[CartItemRead]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+    
 
         
