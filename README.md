@@ -26,6 +26,7 @@ This project was built and debugged from scratch, working through issues like Al
     - current testing for authentication, checkout success/failure and ownership
 
 # Project Structure:
+```
 app/
 ├── core/           # config, database connection, security (hashing, JWT)
 ├── models/         # SQLAlchemy ORM models
@@ -34,7 +35,8 @@ app/
 ├── services/       # business logic (e.g. checkout)
 └── main.py         # app entrypoint
 alembic/            # database migrations
-tests/              # pytest 
+tests/              # pytest suite + fixtures
+```
 
 # Getting Started:
 
