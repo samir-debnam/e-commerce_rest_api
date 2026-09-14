@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.core.config import settings
 from app.routers import product, category, user
-from app.routers import product, category, user, cart
+from app.routers import product, category, user, cart, order
 
 
 app = FastAPI()
@@ -11,6 +11,7 @@ app.include_router(product.router)
 app.include_router(category.router)
 app.include_router(user.router)
 app.include_router(cart.router)
+app.include_router(order.router)
 
 @app.get('/')
 def read_root():

@@ -46,3 +46,21 @@ def test_checkout_empty_cart(client):
 
     response = client.post("/cart/checkout", headers=headers)
     assert response.status_code == 400
+
+
+
+def test_order_history_scoped_to_user(client, db_session):
+
+    headers_a = register_and_login(client, email="usera@example.com")
+    product = Product(name="Widget", price=5.0, stock=10)
+    db_session.add(product)
+    db_session.commit()
+    db_session.refresh(product)
+
+    client.post("/cart/items", json={"product_id": product.id, "quantity": 1}, headers=headers_a)
+    client.post("/cart/checkout", headers=headers_a)
+
+    headers_b = register_and_login(client, email="userb@example.com")
+    response = client.get("/orders/", headers=headers_b)
+    assert response.status_code == 200
+    assert response.json() == []
