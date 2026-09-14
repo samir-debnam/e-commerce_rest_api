@@ -24,10 +24,11 @@ def db_session():
 @pytest.fixture()
 def client(db_session):
     def override_get_db():
+        db = TestingSessionLocal()
         try:
-            yield db_session
+            yield db
         finally:
-            pass
+            db.close()
 
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)

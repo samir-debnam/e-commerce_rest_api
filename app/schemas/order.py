@@ -5,8 +5,8 @@ from app.schemas.product import ProductRead
 
 class OrderItemRead(BaseModel):
     id: int
-    quanitity: int
-    price_at_purchase: int
+    quantity: int
+    price_at_purchase: float
     product: ProductRead
 
     model_config = ConfigDict(from_attributes=True)

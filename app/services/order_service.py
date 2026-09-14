@@ -23,24 +23,24 @@ def checkout(cart: Cart, db: Session) -> Order:
         if product.stock < cart_item.quantity:
             raise HTTPException(status_code=400, detail=f'Not enough stock for {product.name}')
 
-    product.stock -= cart_item.quantity # type: ignore
-    line_total = product.price * cart_item.quantity # type: ignore
-    total += line_total
+        product.stock -= cart_item.quantity 
+        line_total = product.price * cart_item.quantity
+        total += line_total
 
-    order_items.append(
-        OrderItem(
-            product_id=product.id, # type: ignore
-            quantity=cart_item.quantity, # type: ignore
-            price_at_purchase=product.price, # type: ignore
+        order_items.append(
+            OrderItem(
+                product_id=product.id, # type: ignore
+                quantity=cart_item.quantity, # type: ignore
+                price_at_purchase=product.price, # type: ignore
+            )
         )
-    )
 
     new_order = Order(
         user_id=cart.user_id,
         total=total,
         items=order_items
     )
-
+    db.add(new_order)
     for cart_item in list(cart.items):
         db.delete(cart_item)
 
